@@ -114,7 +114,10 @@ export class LibraryUI {
       // enterLabel 없는 generic 케이스도 진입 가능하게
       html += `<button class="np-btn primary" onclick="enterEra('${key}')">이 신문 속으로 들어간다 →</button>`;
     }
-    html += `</div>`;
+    html += `</div>
+    <div style="font-size:9px; color:#a67c00; margin-top:20px; text-align:center; opacity:0.8;">
+      💡 신문 기사 본문의 <span style="border-bottom:1px solid #c8a96e; background:rgba(200,169,110,0.1);">키워드</span>를 클릭하여 단서를 미리 수집할 수 있습니다.
+    </div>`;
 
     document.getElementById('newspaper-content').innerHTML = html;
     this.audio.play('paper');
@@ -190,6 +193,7 @@ export class LibraryUI {
     this.engine.log('time', `[ ${np.landing.date} ${np.time || '오전'} ]`);
     this.engine.log('story', np.eventStory);
     if (np.mysteryInsight) this.engine.log('mystery', np.mysteryInsight);
+    this.engine.log('system', 'TIP: 신문 기사 본문의 강조된 키워드들도 수집해야 하는 단서입니다.');
     this.engine.logD();
 
     this._showInvestigationChoices(key);
