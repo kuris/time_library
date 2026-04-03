@@ -6,26 +6,37 @@
 @import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap');
 
 :root {
-  /* 테마 컬러 (갈색 양피지 컨셉) */
-  --bg-body:      #fdf5e6;   /* 전체 배경 (Old Lace) */
-  --bg-parchment: #f4e9d5;   /* 기본 양피지 색 */
-  --bg-library:   #21160f;   /* 도서관 어두운 배경 */
-  --bg-shelf:     #2e1f16;   /* 선반 목재 색 */
-  
-  --text-main:    #2c1e14;   /* 주 텍스트 (짙은 커피색) */
-  --text-sub:     #5e4a3c;   /* 서브 텍스트 (부드러운 갈색) */
-  --text-mute:    #8b786a;   /* 음소거 텍스트 */
-  
-  --accent-gold:  #b8860b;   /* 고풍스러운 금색 */
-  --accent-solve: #8b1a1a;   /* 해결 스탬프용 레드 */
-  
-  --item-bg:      #fffcf0;   /* 신문 아이템 배경 */
-  --item-border:  #d3c2a6;   /* 아이템 테두리 */
-  
-  --panel-bg:     #ece0ca;   /* 패널 배경 */
-  --panel-border: #d5c4a1;   /* 패널 테두리 */
-  
+  /* Default: Parchment Theme */
+  --bg-body:      #fdf5e6;
+  --bg-parchment: #f4e9d5;
+  --bg-library:   #21160f;
+  --bg-shelf:     #2e1f16;
+  --text-main:    #2c1e14;
+  --text-sub:     #5e4a3c;
+  --text-mute:    #8b786a;
+  --accent-gold:  #b8860b;
+  --accent-solve: #8b1a1a;
+  --item-bg:      #fffcf0;
+  --item-border:  #d3c2a6;
+  --panel-bg:     #ece0ca;
+  --panel-border: #d5c4a1;
   --trans-speed:  0.25s;
+}
+
+body.theme-dark {
+  --bg-body:      #1a1a1a;
+  --bg-parchment: #0d0d0d;
+  --bg-library:   #0d0d0d;
+  --bg-shelf:     #111;
+  --text-main:    #e8e0d0;
+  --text-sub:     #999;
+  --text-mute:    #444;
+  --accent-gold:  #c8a96e;
+  --accent-solve: #c8a96e;
+  --item-bg:      #181818;
+  --item-border:  #252525;
+  --panel-bg:     #0a0a0a;
+  --panel-border: #141414;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -36,8 +47,37 @@ body {
   font-family: 'Nanum Myeongjo', serif;
   min-height: 100vh;
   overflow-x: hidden;
-  /* 아주 미세한 종이 질감 효과 */
+  transition: background 0.5s ease, color 0.5s ease;
+}
+
+body:not(.theme-dark) {
   background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+}
+
+/* 테마 토글 버튼 */
+.theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  color: var(--accent-gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000;
+  font-size: 18px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.theme-toggle:hover {
+  transform: scale(1.1);
+  background: var(--accent-gold);
+  color: var(--bg-body);
 }
 
 .screen { display: none; }

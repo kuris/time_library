@@ -136,6 +136,8 @@ export class GameEngine {
         };
         area.appendChild(btn);
       });
+      // 선택지 로드 후 스크롤
+      this._scrollLog();
     };
     waitAndShow();
   }

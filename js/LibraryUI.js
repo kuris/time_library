@@ -20,6 +20,36 @@ export class LibraryUI {
     window.enterEra       = (k) => this.enterEra(k);
     window.backToLibrary  = ()  => this.backToLibrary();
     window.findClueInNp   = (id, label, desc) => this.findClueInNp(id, label, desc);
+
+    this.initTheme();
+  }
+
+  // ─────────────────────────────
+  //  테마 관리 (Dark / Parchment)
+  // ─────────────────────────────
+  initTheme() {
+    const saved = localStorage.getItem('time_library_theme') || 'parchment';
+    this.setTheme(saved);
+
+    const btn = document.getElementById('theme-toggle');
+    if (btn) {
+      btn.onclick = () => {
+        const current = document.body.classList.contains('theme-dark') ? 'dark' : 'parchment';
+        this.setTheme(current === 'dark' ? 'parchment' : 'dark');
+      };
+    }
+  }
+
+  setTheme(name) {
+    const icon = document.getElementById('theme-icon');
+    if (name === 'dark') {
+      document.body.classList.add('theme-dark');
+      if (icon) icon.textContent = '☀️';
+    } else {
+      document.body.classList.remove('theme-dark');
+      if (icon) icon.textContent = '🌙';
+    }
+    localStorage.setItem('time_library_theme', name);
   }
 
   // ─────────────────────────────
