@@ -212,7 +212,11 @@ export class LibraryUI {
     this.landingTransition(np.landing.year, np.landing.date, np.landing.msg, () => {
       document.getElementById('field-notes-area').classList.add('active');
       document.getElementById('game-stats').classList.add('active');
-      document.querySelector('.clue-panel').classList.add('active');
+      
+      // 모바일에서는 시대 진입 시 자동으로 단서창을 열지 않음
+      if (window.innerWidth > 768) {
+        document.querySelector('.clue-panel').classList.add('active');
+      }
 
       this.engine.clearEl('game-log');
       this.engine.clearEl('game-choices');
@@ -409,7 +413,7 @@ export class LibraryUI {
         
         if (status) {
           if (typeof record === 'object' && record.total) {
-            status.innerHTML = `<span style="color:#c8a96e">✓ 해결됨</span> <span style="font-size:10px; opacity:0.6;">(진실 ${record.count}/${record.total})</span>`;
+            status.innerHTML = `<span style="color:#c8a96e">✓ 해결됨</span> <span style="font-size:11px; color:#c8a96e; font-weight:bold;">(${record.count}/${record.total})</span>`;
           } else {
             status.textContent = '✓ 해결됨';
           }
