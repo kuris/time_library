@@ -259,4 +259,36 @@ export class GameEngine {
     const el = document.getElementById('game-era-badge');
     if (el) el.textContent = text;
   }
+
+  // ─────────────────────────────
+  //  세이브/로드 (LocalStorage)
+  // ─────────────────────────────
+  saveState() {
+    const data = {
+      solved: this.state.solved,
+      // 추후 글로벌 스탯이나 해금 요소가 생기면 여기에 추가
+    };
+    localStorage.setItem('time_library_save', JSON.stringify(data));
+    console.log('✅ Game progress saved.');
+  }
+
+  loadState() {
+    const saved = localStorage.getItem('time_library_save');
+    if (!saved) return false;
+    try {
+      const data = JSON.parse(saved);
+      if (data.solved) {
+        this.state.solved = data.solved;
+      }
+      console.log('📖 Game progress loaded.');
+      return true;
+    } catch (e) {
+      console.error('❌ Failed to load save data:', e);
+      return false;
+    }
+  }
+
+  hasSaveData() {
+    return !!localStorage.getItem('time_library_save');
+  }
 }

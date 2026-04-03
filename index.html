@@ -11,6 +11,21 @@
 
 <div class="flash" id="flash"></div>
 
+<!-- 세이브 로드 프롬프트 -->
+<div id="save-modal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">RECOVERY PROTOCOL</div>
+    <div class="modal-body">
+      이전의 수사 원본(세이브 파일)이 발견되었습니다.<br>
+      기록을 복구하여 이어서 진행하시겠습니까?
+    </div>
+    <div class="modal-footer">
+      <button id="btn-load-fresh" class="modal-btn">처음부터 시작</button>
+      <button id="btn-load-save" class="modal-btn primary">기록 불러오기</button>
+    </div>
+  </div>
+</div>
+
 <!-- 착륙 오버레이 -->
 <div id="landing-overlay">
   <div class="landing-year" id="landing-year"></div>

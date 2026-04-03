@@ -250,6 +250,7 @@ export class LibraryUI {
   // ─────────────────────────────
   solveCase(key, headline, clueLabels, ending) {
     this.engine.state.solved[key] = true;
+    this.engine.saveState(); // 자동 저장
     this.audio.play('solve');
 
     const item   = document.getElementById('np-item-' + key);
@@ -273,5 +274,19 @@ export class LibraryUI {
 
     document.getElementById('solved-content').innerHTML = html;
     this.flashTransition(() => this.showScreen('solved'));
+  }
+
+  // ─────────────────────────────
+  //  로드된 데이터 UI 반영
+  // ─────────────────────────────
+  updateSolvedUI() {
+    Object.keys(this.engine.state.solved).forEach(key => {
+      if (this.engine.state.solved[key]) {
+        const item   = document.getElementById('np-item-' + key);
+        const status = document.getElementById('np-status-' + key);
+        if (item)   item.classList.add('solved');
+        if (status) status.textContent = '✓ 해결됨';
+      }
+    });
   }
 }

@@ -317,6 +317,46 @@ body {
   100% { opacity: 0; }
 }
 
+/* 세이브 로드 모달 */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(4px); z-index: 10000;
+  display: none; align-items: center; justify-content: center;
+  animation: fadeIn 0.4s ease;
+}
+.modal-overlay.active { display: flex; }
+
+.modal-content {
+  background: #0d0d0d; border: 1px solid #c8a96e33;
+  width: 90%; max-width: 400px; padding: 30px;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.9);
+  text-align: center;
+}
+
+.modal-header {
+  font-size: 11px; letter-spacing: 5px; color: #444;
+  border-bottom: 1px solid #1a1a1a; padding-bottom: 15px; margin-bottom: 20px;
+  font-weight: 800;
+}
+
+.modal-body {
+  font-size: 13px; color: #c8b89a; line-height: 1.8;
+  margin-bottom: 30px; letter-spacing: 1px;
+}
+
+.modal-footer { display: flex; gap: 12px; }
+
+.modal-btn {
+  flex: 1; background: #1a1a1a; color: #666; border: 1px solid #252525;
+  padding: 12px; font-size: 11px; cursor: pointer; transition: all 0.2s;
+  font-family: inherit; letter-spacing: 2px;
+}
+.modal-btn:hover { background: #222; color: #888; border-color: #333; }
+.modal-btn.primary { background: #c8a96e; color: #0a0a0a; border-color: #c8a96e; font-weight: 800; }
+.modal-btn.primary:hover { background: #e0c080; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
 /* 착륙 오버레이 */
 #landing-overlay {
   position: fixed; inset: 0; background: #080808; z-index: 8888;

@@ -25,6 +25,27 @@ const engine  = new GameEngine(audio);
 const library = new LibraryUI(engine, audio, NEWSPAPERS, STORIES);
 const admin   = new AdminUI(library);
 
+// ── 세이브 로드 체크 ──
+const checkSave = () => {
+  if (engine.hasSaveData()) {
+    const modal = document.getElementById('save-modal');
+    modal.classList.add('active');
+
+    document.getElementById('btn-load-save').onclick = () => {
+      engine.loadState();
+      library.updateSolvedUI();
+      modal.classList.remove('active');
+      audio.play('click');
+    };
+
+    document.getElementById('btn-load-fresh').onclick = () => {
+      modal.classList.remove('active');
+      audio.play('click');
+      // 시작 시 세이브를 굳이 지우지 않고, 다음 solveCase 시점에 덮어씌워짐
+    };
+  }
+};
+
 // ── 라우팅 ──
 const handleRoute = () => {
   const hash = window.location.hash;
@@ -37,3 +58,4 @@ const handleRoute = () => {
 
 window.addEventListener('hashchange', handleRoute);
 handleRoute(); // 초기 실행
+checkSave();   // 세이브 체크
