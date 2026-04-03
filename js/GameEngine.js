@@ -92,12 +92,13 @@ export class GameEngine {
   }
 
   _scrollLog() {
-    const c = document.getElementById('game-log');
-    if (!c) return;
-    // 렌더링 직후에 스크롤 위치를 갱신하도록 보장
-    requestAnimationFrame(() => {
-      c.scrollTop = c.scrollHeight;
-    });
+    const container = document.querySelector('.newspaper-main-container');
+    if (container) {
+      // 렌더링 직후에 스크롤 위치를 갱신하도록 보장
+      requestAnimationFrame(() => {
+        container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+      });
+    }
   }
 
   isTyping() {
@@ -155,7 +156,7 @@ export class GameEngine {
     this.state.cluesFound.push(id);
     this.audio.play('clue');
     this.addClueToPanel(label, desc);
-    this.updateClueHeader();
+    this.updateMysteryProgress(); // 단서 카운트 및 미스터리 바 통합 업데이트
     return true;
   }
 
