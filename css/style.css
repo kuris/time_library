@@ -262,6 +262,8 @@ body {
   .shelf-row { gap: 10px; justify-content: center; }
   .newspaper-item { width: 130px; height: 180px; }
   .library-subtitle { font-size: 20px; }
+  #screen-newspaper, #screen-investigation { background: #1a1a1a; }
+  .newspaper-container { padding: 0; width: 100%; }
 
   /* 2. 신문 본문 */
   .newspaper-wrap { padding: 15px 12px; box-shadow: none; filter: none; width:100%; border-radius:0; }
