@@ -124,46 +124,12 @@ export class AdminUI {
 
     // 들여쓰기 포함한 예쁜 출력
     let code = JSON.stringify(obj, null, 2);
+    // JSON을 JS 객체 리터럴처럼 보이게 약간 보정 (따옴표 제거 등은 복잡하므로 JSON을 그대로 쓰고 앞에 export 붙임)
     const finalCode = `// 이 내용을 scenarios_custom.js 등에 복사해서 붙여넣으세요.\nexport const scenarios_new = ${code};`;
 
-    // ── CSV Row 생성 (구글 시트용) ──
-    const csvRow = this.toCSVRow(id, obj[id]);
-
     const out = document.getElementById('admin-code-output');
-    out.textContent = `### [CSV Row for Google Sheet] ###\n${csvRow}\n\n### [JavaScript Code Copy] ###\n${finalCode}`;
+    out.textContent = finalCode;
     document.getElementById('admin-code-wrap').classList.add('visible');
-  }
-
-  // 객체를 CSV 한 줄로 변환 (따옴표 처리 포함)
-  toCSVRow(id, data) {
-    const fields = [
-      id,
-      data.category || '2000s',
-      data.masthead,
-      data.date,
-      data.issue,
-      data.headline,
-      data.sub,
-      data.col1,
-      data.col2,
-      data.memo,
-      JSON.stringify(data.clues),
-      data.location,
-      data.eventStory,
-      data.mysteryInsight,
-      JSON.stringify(data.choices),
-      data.solveHeadline,
-      data.solveEnding,
-      data.landing.year,
-      data.landing.date,
-      data.landing.msg,
-      'true' // isGeneric
-    ];
-
-    return fields.map(f => {
-      let s = String(f || '').replace(/"/g, '""'); // 따옴표 이스케이프
-      return `"${s}"`;
-    }).join(',');
   }
 
   copyToClipboard() {

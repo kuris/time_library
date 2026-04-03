@@ -4,18 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="기록되지 않은 한국 현대사의 진실을 파헤치는 탐정 게임">
-  <title>시간의 도서관 (Time Archive Simulator)</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏳</text></svg>">
+  <title>시간의 도서관</title>
   <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
 
 <div class="flash" id="flash"></div>
-
-<!-- 테마 토글 버튼 -->
-<button class="theme-toggle" id="theme-toggle" title="전환 (Theme Toggle)">
-  <span id="theme-icon">🌙</span>
-</button>
 
 <!-- 착륙 오버레이 -->
 <div id="landing-overlay">
@@ -34,20 +28,73 @@
 
   <div class="shelf">
     <div class="shelf-label">── 1980's : 격동과 소생 ──────────────────────────────</div>
-    <div class="shelf-row" id="shelf-1980s"></div>
+    <div class="shelf-row">
+      <div class="newspaper-item" id="np-item-choi1980" onclick="openNewspaper('choi1980')">
+        <div class="np-date">1980.05.18</div>
+        <div class="np-headline">비상계엄 전국 확대<br>군, 주요도시 장악</div>
+        <div class="np-status" id="np-status-choi1980">● 미해결</div>
+      </div>
+      <div class="newspaper-item" id="np-item-color79" onclick="openNewspaper('color79')">
+        <div class="np-date">1980.12.01</div>
+        <div class="np-headline">컬러 TV 방송 개막<br>안방 극장의 혁명</div>
+        <div class="np-status" id="np-status-color79">● 미해결</div>
+      </div>
+      <div class="newspaper-item" id="np-item-baseball82" onclick="openNewspaper('baseball82')">
+        <div class="np-date">1982.03.27</div>
+        <div class="np-headline">프로야구 공식 출범<br>어린이에겐 꿈을</div>
+        <div class="np-status" id="np-status-baseball82">● 미해결</div>
+      </div>
+    </div>
   </div>
 
   <div class="shelf">
     <div class="shelf-label">── 1990's : 풍요와 비극 ──────────────────────────────</div>
-    <div class="shelf-row" id="shelf-1990s"></div>
+    <div class="shelf-row">
+      <div class="newspaper-item" id="np-item-seongsu94" onclick="openNewspaper('seongsu94')">
+        <div class="np-date">1994.10.22</div>
+        <div class="np-headline">성수대교 붕괴 참사<br>예견된 인재 비판</div>
+        <div class="np-status" id="np-status-seongsu94">● 미해결</div>
+      </div>
+      <div class="newspaper-item" id="np-item-sampoong95" onclick="openNewspaper('sampoong95')">
+        <div class="np-date">1995.06.30</div>
+        <div class="np-headline">삼풍백화점 붕괴<br>탐욕이 부른 참극</div>
+        <div class="np-status" id="np-status-sampoong95">● 미해결</div>
+      </div>
+      <div class="newspaper-item" id="np-item-imf1997" onclick="openNewspaper('imf1997')">
+        <div class="np-date">1997.11.21</div>
+        <div class="np-headline">정부, IMF 구제금융<br>공식 신청</div>
+        <div class="np-status" id="np-status-imf1997">● 미해결</div>
+      </div>
+    </div>
   </div>
 
   <div class="shelf">
     <div class="shelf-label">── 2000's ~ Present : 진실의 기록 ──────────────────────────────</div>
-    <div class="shelf-row" id="shelf-2000s"></div>
+    <div class="shelf-row">
+      <div class="newspaper-item" id="np-item-it_bubble" onclick="openNewspaper('it_bubble')">
+        <div class="np-date">2000.02.15</div>
+        <div class="np-headline">코스닥 닷컴 열풍<br>디지털 신기루의 그림자</div>
+        <div class="np-status" id="np-status-it_bubble">● 미해결</div>
+      </div>
+      <div class="newspaper-item" id="np-item-worldcup02" onclick="openNewspaper('worldcup02')">
+        <div class="np-date">2002.06.19</div>
+        <div class="np-headline">월드컵 8강 신화<br>축제 속의 침묵</div>
+        <div class="np-status" id="np-status-worldcup02">● 미해결</div>
+      </div>
+      <div class="newspaper-item" id="np-item-sewol14" onclick="openNewspaper('sewol14')">
+        <div class="np-date">2014.04.17</div>
+        <div class="np-headline">세월호 침몰 사고<br>잠겨버린 골든타임</div>
+        <div class="np-status" id="np-status-sewol14">● 미해결</div>
+      </div>
+      <div class="newspaper-item" id="np-item-martial24" onclick="openNewspaper('martial24')">
+        <div class="np-date">2024.12.03</div>
+        <div class="np-headline">비상계엄 전격 선포<br>가장 긴 밤의 시작</div>
+        <div class="np-status" id="np-status-martial24">● 미해결</div>
+      </div>
+    </div>
   </div>
 
-  <div class="library-footer" id="library-footer">── 기록되지 않은 진실 ──</div>
+  <div class="library-footer">── 총 10개의 신문 · 기록되지 않은 진실 ──</div>
 </div>
 
 <!-- ══════════════════════════════
@@ -63,13 +110,9 @@
 <div class="screen" id="screen-game">
   <div class="game-main">
     <div class="game-header">
-      <div class="game-era-badge" id="game-era-badge">19XX.XX.XX</div>
-      <div class="game-location" id="game-location">📍 탐색 중...</div>
-      <div class="game-clues" id="game-clues">단서 0/5</div>
-      <!-- 모바일 전용 단서 버튼 -->
-      <button class="mobile-clue-btn" onclick="toggleCluePanel()">
-        <span>🔑</span> <span class="btn-text">단서</span>
-      </button>
+      <div class="game-era-badge" id="game-era-badge">──</div>
+      <div class="game-location"  id="game-location">──</div>
+      <div class="game-clues"     id="game-clues">단서 0/5</div>
     </div>
     <div class="game-stats" id="game-stats">
       <div class="stat-item"><span class="stat-label">MONEY</span><span class="stat-value" id="stat-money">100</span></div>

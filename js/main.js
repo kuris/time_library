@@ -6,56 +6,34 @@
 import { AudioManager }    from './AudioManager.js';
 import { GameEngine }      from './GameEngine.js';
 import { LibraryUI }       from './LibraryUI.js';
-import { NEWSPAPERS as FALLBACK_NP } from './data/index.js';
+import { NEWSPAPERS }      from './data/index.js';
 import { storyIMF1997 }    from './stories/story_imf1997.js';
 import { story1980 }       from './stories/story_1980.js';
 import { AdminUI }         from './AdminUI.js';
-import { DataLoader }      from './DataLoader.js';
-
-// ── 구글 시트 설정 ──────────────────────────────────────────────
-const SHEET_ID = '11S56XbS10yTAXi-U6ZD0AIiXXSVYrhlVqsO0qxCrN9E';
-const dataLoader = new DataLoader(SHEET_ID);
 
 // ── 하드코딩 스토리 맵 ─────────────────────────────────────────
+// { scenarioKey: (engine, solveCase) => void }
+// 새 스토리를 추가하려면 여기에 한 줄만 추가하면 됩니다.
 const STORIES = {
   imf1997:  storyIMF1997,
   choi1980: story1980,
 };
 
 // ── 앱 초기화 ──────────────────────────────────────────────────
-const initApp = async () => {
-  const audio  = new AudioManager();
-  const engine = new GameEngine(audio);
-  
-  // 시나리오 로드 (GSheet)
-  console.log('📦 시나리오 데이터를 가져오는 중...');
-  const remoteNP = await dataLoader.loadScenarios();
-  
-  // 로컬 데이터(41개)와 리모트 데이터를 합침 (리모트가 우선순위)
-  const newspapers = {
-    ...FALLBACK_NP,
-    ...(remoteNP || {})
-  };
-  
-  console.log(`📚 총 ${Object.keys(newspapers).length}개의 시나리오를 로드했습니다.`);
-  
-  const library = new LibraryUI(engine, audio, newspapers, STORIES);
-  const admin   = new AdminUI(library);
+const audio   = new AudioManager();
+const engine  = new GameEngine(audio);
+const library = new LibraryUI(engine, audio, NEWSPAPERS, STORIES);
+const admin   = new AdminUI(library);
 
-  // ── 라우팅 ──
-  const handleRoute = () => {
-    const hash = window.location.hash;
-    if (hash === '#/admin' || hash === '#admin') {
-      library.showScreen('admin');
-    } else if (hash === '#/library' || hash === '#library' || !hash) {
-      library.showScreen('library');
-    }
-  };
-
-  window.addEventListener('hashchange', handleRoute);
-  handleRoute(); 
-  
-  console.log('✅ 시스템 준비 완료.');
+// ── 라우팅 ──
+const handleRoute = () => {
+  const hash = window.location.hash;
+  if (hash === '#/admin' || hash === '#admin') {
+    library.showScreen('admin');
+  } else if (hash === '#/library' || hash === '#library' || !hash) {
+    library.showScreen('library');
+  }
 };
 
-initApp();
+window.addEventListener('hashchange', handleRoute);
+handleRoute(); // 초기 실행

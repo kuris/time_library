@@ -6,11 +6,9 @@
 import { scenarios_1980s } from './scenarios_1980s.js';
 import { scenarios_1990s } from './scenarios_1990s.js';
 import { scenarios_2000s } from './scenarios_2000s.js';
-import { expandedScenarios } from './scenarios_expanded.js';
 
 export const NEWSPAPERS = {
   ...scenarios_1980s,
   ...scenarios_1990s,
   ...scenarios_2000s,
-  ...expandedScenarios,
 };

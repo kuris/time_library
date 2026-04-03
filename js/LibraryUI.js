@@ -20,104 +20,6 @@ export class LibraryUI {
     window.enterEra       = (k) => this.enterEra(k);
     window.backToLibrary  = ()  => this.backToLibrary();
     window.findClueInNp   = (id, label, desc) => this.findClueInNp(id, label, desc);
-    window.toggleCluePanel = () => this.toggleCluePanel();
-
-    this.initTheme();
-    this.renderLibrary();
-  }
-
-  // ─────────────────────────────
-  //  도서관 화면 렌더링
-  // ─────────────────────────────
-  renderLibrary() {
-    const categories = ['1980s', '1990s', '2000s'];
-    categories.forEach(cat => {
-      const el = document.getElementById(`shelf-${cat}`);
-      if (el) el.innerHTML = '';
-    });
-
-    const renderCandidates = [];
-
-    Object.entries(this.newspapers).forEach(([key, np]) => {
-      const directClues = (Array.isArray(np.clues) ? np.clues.length : 0);
-      const choiceClues = (Array.isArray(np.choices) ? np.choices.filter(c => c && c.clue).length : 0);
-      const clueCount = directClues + choiceClues;
-
-      // 단서가 존재하는 경우에만 5개 이하 시나리오를 숨깁니다.
-      if (clueCount > 0 && clueCount <= 5) return;
-
-      renderCandidates.push({ key, np });
-    });
-
-    // 필터링 결과가 비어 있으면, 그대로 공백 상태로 둡니다.
-    // (사용자 요청: 5개 이하 단서 항목 제외)
-
-    let total = 0;
-    renderCandidates.forEach(({ key, np }) => {
-      total++;
-      const cat = np.category || '2000s';
-      const shelf = document.getElementById(`shelf-${cat}`) || document.getElementById('shelf-2000s');
-      if (!shelf) return;
-
-      const solved = this.engine.state.solved[key];
-      const div = document.createElement('div');
-      div.className = `newspaper-item ${solved ? 'solved' : ''}`;
-      div.id = `np-item-${key}`;
-      div.onclick = () => window.openNewspaper(key);
-
-      // 날짜 포맷 (YYYY.MM.DD) 추출 시도
-      let displayDate = np.date || '';
-      const dateMatch = displayDate.match(/(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일/);
-      if (dateMatch) {
-         displayDate = `${dateMatch[1]}.${dateMatch[2].padStart(2,'0')}.${dateMatch[3].padStart(2,'0')}`;
-      }
-
-      div.innerHTML = `
-        <div class="np-date">${displayDate}</div>
-        <div class="np-headline">${np.headline.replace('...', '<br>')}</div>
-        <div class="np-status" id="np-status-${key}">${solved ? '✓ 해결됨' : '● 미해결'}</div>
-      `;
-      shelf.appendChild(div);
-    });
-
-    const footer = document.getElementById('library-footer');
-    if (footer) footer.textContent = `── 총 ${total}개의 신문 · 기록되지 않은 진실 ──`;
-  }
-
-  // ─────────────────────────────
-  //  테마 관리 (Dark / Parchment)
-  // ─────────────────────────────
-  initTheme() {
-    const saved = localStorage.getItem('time_library_theme') || 'parchment';
-    this.setTheme(saved);
-
-    const btn = document.getElementById('theme-toggle');
-    if (btn) {
-      btn.onclick = () => {
-        const current = document.body.classList.contains('theme-dark') ? 'dark' : 'parchment';
-        this.setTheme(current === 'dark' ? 'parchment' : 'dark');
-      };
-    }
-  }
-
-  setTheme(name) {
-    const icon = document.getElementById('theme-icon');
-    if (name === 'dark') {
-      document.body.classList.add('theme-dark');
-      if (icon) icon.textContent = '☀️';
-    } else {
-      document.body.classList.remove('theme-dark');
-      if (icon) icon.textContent = '🌙';
-    }
-    localStorage.setItem('time_library_theme', name);
-  }
-
-  // ─────────────────────────────
-  //  모바일 전역 토글
-  // ─────────────────────────────
-  toggleCluePanel() {
-    const el = document.querySelector('.clue-panel');
-    if (el) el.classList.toggle('active');
   }
 
   // ─────────────────────────────
@@ -125,10 +27,6 @@ export class LibraryUI {
   // ─────────────────────────────
   showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    // 신규 화면 이동 시 패널 닫기 (모바일 대응)
-    const cp = document.querySelector('.clue-panel');
-    if (cp) cp.classList.remove('active');
-
     const el = document.getElementById('screen-' + id);
     if (el) el.classList.add('active');
   }
@@ -298,21 +196,6 @@ export class LibraryUI {
 
     if (choices.length > 0) {
       this.engine.showChoices(choices);
-    } else {
-      // 모든 선택지 소진 시 강제 귀환 버튼 (소프트락 방지)
-      this.engine.log('system', '이곳에서의 공식적인 조사는 모두 마친 것 같습니다. 도서관으로 돌아가 기록을 정리해야 합니다.');
-      this.engine.showChoices([{
-        label:  '▶ 도서관으로 돌아가 조사를 마친다',
-        isKey:  true,
-        action: () => {
-          const labels = this.engine.state.cluesFound.map(id => {
-            const from1 = (np.clues || []).find(cc => cc.id === id);
-            const from2 = (np.choices || []).find(ch => ch.clue && ch.clue.id === id)?.clue;
-            return (from1 || from2)?.label || '미상의 단서';
-          });
-          this.solveCase(key, np.solveHeadline, labels, np.solveEnding);
-        },
-      }]);
     }
   }
 
