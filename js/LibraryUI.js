@@ -82,11 +82,18 @@ export class LibraryUI {
     document.getElementById('game-location').textContent  = '도서관 내부 — 기록 보관소';
     document.getElementById('game-clues').textContent     = `단서 ${this._npCluesFound.length}/${totalNeeded}`;
 
+    const overlay = document.getElementById('clue-panel-overlay');
+    const closeBtn = document.querySelector('.clue-panel-close');
+    
     // 사이드바 활성화 및 미스터리 바 표시 (모바일에선 닫힌 채로 시작)
     if (window.innerWidth > 768) {
       document.querySelector('.clue-panel').classList.add('active');
+      if (overlay) overlay.classList.remove('active');
+      if (closeBtn) closeBtn.style.display = 'none';
     } else {
       document.querySelector('.clue-panel').classList.remove('active');
+      if (overlay) overlay.classList.remove('active');
+      if (closeBtn) closeBtn.style.display = 'block';
     }
     document.getElementById('clue-list').innerHTML = '';
     this.engine.resetMysteryBar(totalNeeded);
