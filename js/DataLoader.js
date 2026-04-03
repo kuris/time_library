@@ -100,44 +100,45 @@ export class DataLoader {
     if (!str || str.trim() === '') return fallback;
     let cleaned = str.trim();
 
-    try {
-      // 1. 구글 시트 복사-붙여넣기 시 발생하는 따옴표 중첩 보정 로직
-      // 앞뒤가 따옴표로 감싸져 있고 내부도 따옴표 지옥인 경우를 처리
-      if (cleaned.startsWith('"') && cleaned.endsWith('"')) {
-        // 내부의 "" 를 " 로 변환하기 전에, 이중/삼중 이스케이프된 것을 먼저 정리
-        // 8개/4개씩 겹친 따옴표를 2개로 압축
-        cleaned = cleaned.replace(/"{4,}/g, '""');
-      }
+    // 1. 기초 청소 (따옴표 압축 및 역슬래시 제거)
+    cleaned = cleaned.replace(/\\"/g, '"').replace(/\\/g, '');
+    cleaned = cleaned.replace(/"{2,}/g, '"'); // 2개 이상의 연속된 따옴표를 하나로
 
-      // JSON 표준에 맞게 파싱 시도
+    // 2. 앞뒤에 붙은 불필요한 따옴표 제거 (CSV 파생물)
+    if (cleaned.startsWith('"')) cleaned = cleaned.substring(1);
+    if (cleaned.endsWith('"')) cleaned = cleaned.substring(0, cleaned.length - 1);
+
+    try {
       return JSON.parse(cleaned);
     } catch (e) {
-      // 2. 최후의 수단: 모든 연속된 따옴표 및 역슬래시 강제 치환 (가장 강력한 보정)
+      // 3. 심폐소생술: 정규식을 이용해 유효한 { } 객체들만이라도 추출
       try {
-        console.log('⚠️ JSON 심폐소생술 모드 가동 중...');
-        let brute = cleaned;
-        
-        // 역슬래시(\) 제거 (Gemini가 잘못 넣은 이스케이프 제거)
-        brute = brute.replace(/\\"/g, '"');
-        brute = brute.replace(/\\/g, '');
+        console.log('💊 데이터 복구 시도 중...');
+        // { "key": "value" ... } 형태를 찾아냄
+        const matches = cleaned.match(/\{[^{}]+\}/g);
+        if (matches && matches.length > 0) {
+          const recovered = matches.map(m => {
+            try {
+              // 개별 객체에 대해 한 번 더 청소 후 파싱
+              let objStr = m.trim();
+              if (!objStr.endsWith('}')) objStr += '}';
+              return JSON.parse(objStr);
+            } catch (innerE) { return null; }
+          }).filter(x => x !== null);
 
-        // 앞뒤 따옴표 정리
-        if (brute.startsWith('"') && brute.endsWith('"')) {
-          brute = brute.substring(1, brute.length - 1);
+          if (recovered.length > 0) return recovered;
         }
-        
-        // 연속된 따옴표 압축
-        brute = brute.replace(/"+/g, '"');
-        
-        // 양 끝에 대괄호나 중괄호가 없다면 추가 시도 (파손 복구)
-        if (!brute.startsWith('[') && !brute.startsWith('{')) {
-           // 데이터 형태에 따라 유추 (Clues는 [], Choices는 [])
-           // 일단은 에러 로그만 찍고 반환
-        }
+      } catch (e3) { /* 실패 시 다음 단계로 */ }
 
-        return JSON.parse(brute);
-      } catch (e2) {
-        console.warn('❌ 완전 파손된 JSON 데이터:', cleaned);
+      // 4. 최후의 수단: 잘린 데이터 복구 (중괄호/대괄호 밸런싱)
+      try {
+        let repaired = cleaned;
+        if (repaired.startsWith('[') && !repaired.endsWith(']')) repaired += ']';
+        if (repaired.startsWith('{') && !repaired.endsWith('}')) repaired += '}';
+        // 다시 시도
+        return JSON.parse(repaired);
+      } catch (e4) {
+        console.warn('❌ 완전 파손된 데이터 (복구 불가능):', cleaned.substring(0, 50) + '...');
         return fallback;
       }
     }
