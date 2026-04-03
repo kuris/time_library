@@ -49,10 +49,8 @@ export class LibraryUI {
       renderCandidates.push({ key, np });
     });
 
-    // 필터링 결과가 비어 있으면, 최소 한 개는 노출 (배포 환경 미니멈 안전장치)
-    if (renderCandidates.length === 0) {
-      Object.entries(this.newspapers).forEach(([key, np]) => renderCandidates.push({ key, np }));
-    }
+    // 필터링 결과가 비어 있으면, 그대로 공백 상태로 둡니다.
+    // (사용자 요청: 5개 이하 단서 항목 제외)
 
     let total = 0;
     renderCandidates.forEach(({ key, np }) => {
