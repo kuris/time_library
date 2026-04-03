@@ -11,32 +11,46 @@
   --bg-parchment: #f4e9d5;
   --bg-library:   #21160f;
   --bg-shelf:     #2e1f16;
+  --bg-panel:     #e6dfcc;   /* 단서 패널 등 상시 배경 */
+  --bg-stats:     #f1ebd8;   /* 스탯 바 배경 */
+  
   --text-main:    #2c1e14;
   --text-sub:     #5e4a3c;
   --text-mute:    #8b786a;
+  --text-npc:     #504070;   /* NPC 대화색 */
+  --text-inner:   #706050;   /* 내면의 목소리 */
+  
   --accent-gold:  #b8860b;
   --accent-solve: #8b1a1a;
+  
   --item-bg:      #fffcf0;
   --item-border:  #d3c2a6;
-  --panel-bg:     #ece0ca;
+  --panel-bg:     #ece0ca;   /* 입력 영역/헤더 배경 */
   --panel-border: #d5c4a1;
   --trans-speed:  0.25s;
 }
 
 body.theme-dark {
-  --bg-body:      #1a1a1a;
-  --bg-parchment: #0d0d0d;
+  --bg-body:      #121212;
+  --bg-parchment: #1a1a1a;
   --bg-library:   #0d0d0d;
   --bg-shelf:     #111;
+  --bg-panel:     #181818;
+  --bg-stats:     #1a1a1a;
+  
   --text-main:    #e8e0d0;
-  --text-sub:     #999;
-  --text-mute:    #444;
+  --text-sub:     #b0a090;
+  --text-mute:    #666;
+  --text-npc:     #a090ff;
+  --text-inner:   #c0b0a0;
+  
   --accent-gold:  #c8a96e;
   --accent-solve: #c8a96e;
-  --item-bg:      #181818;
-  --item-border:  #252525;
-  --panel-bg:     #0a0a0a;
-  --panel-border: #141414;
+  
+  --item-bg:      #1e1e1e;
+  --item-border:  #333;
+  --panel-bg:     #1a1a1a;
+  --panel-border: #222;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -239,7 +253,7 @@ body:not(.theme-dark) {
 /* 플레이어 스탯 바 */
 .game-stats {
   display: flex; gap: 20px; padding: 12px 24px;
-  background: #f1ebd8; border-bottom: 1px solid var(--panel-border);
+  background: var(--bg-stats); border-bottom: 1px solid var(--panel-border);
   font-size: 10px; letter-spacing: 1px; color: var(--text-mute);
 }
 .stat-item  { display: flex; align-items: center; gap: 8px; }
@@ -253,7 +267,7 @@ body:not(.theme-dark) {
 }
 #game-log::-webkit-scrollbar       { width: 4px; }
 #game-log::-webkit-scrollbar-track { background: var(--bg-parchment); }
-#game-log::-webkit-scrollbar-thumb { background: #d3c2a6; }
+#game-log::-webkit-scrollbar-thumb { background: var(--item-border); }
 
 .log-line         { font-size: 14px; line-height: 2.1; padding: 2px 0; color: var(--text-main); }
 .log-line.time    { color: #8b786a; font-size: 10px; letter-spacing: 4px; margin-top: 16px; border-top: 1px solid rgba(0,0,0,0.03); padding-top: 10px; }
@@ -263,8 +277,8 @@ body:not(.theme-dark) {
 .log-line.mystery { color: #5d6a3b; font-style: italic; background: rgba(0,0,0,0.02); padding: 8px 12px; }
 .log-line.bad     { color: #a64d4d; border-left: 3px solid #a64d4d; padding-left: 12px; }
 .log-line.good    { color: #4d7a4d; border-left: 3px solid #4d7a4d; padding-left: 12px; }
-.log-line.npc     { color: #504070; padding-left: 14px; border-left: 2px solid #504070; font-weight: 700; }
-.log-line.inner   { color: #706050; font-style: italic; font-size: 13px; padding-left: 14px; }
+.log-line.npc     { color: var(--text-npc); padding-left: 14px; border-left: 2px solid var(--text-npc); font-weight: 700; }
+.log-line.inner   { color: var(--text-inner); font-style: italic; font-size: 13px; padding-left: 14px; }
 .log-line.divider { border-bottom: 2px solid rgba(0,0,0,0.05); margin: 15px 0; }
 
 #game-choices {
@@ -288,16 +302,16 @@ body:not(.theme-dark) {
    단서 패널
 ════════════════════════════ */
 .clue-panel {
-  width: 250px; min-width: 250px; background: #e6dfcc;
+  width: 250px; min-width: 250px; background: var(--bg-panel);
   padding: 24px 20px; display: flex; flex-direction: column;
   gap: 12px; overflow-y: auto; height: 100vh;
   position: sticky; top: 0;
   border-left: 1px solid var(--panel-border);
 }
 .clue-panel::-webkit-scrollbar       { width: 4px; }
-.clue-panel::-webkit-scrollbar-thumb { background: #d3c2a6; }
+.clue-panel::-webkit-scrollbar-thumb { background: var(--item-border); }
 
-.clue-panel-title { font-size: 9px; color: #a09080; letter-spacing: 5px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 12px; text-transform: uppercase; }
+.clue-panel-title { font-size: 9px; color: var(--text-mute); letter-spacing: 5px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 12px; text-transform: uppercase; }
 
 .clue-item {
   background: var(--item-bg); border: 1px solid var(--item-border); padding: 14px;
