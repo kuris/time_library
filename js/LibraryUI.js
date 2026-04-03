@@ -23,6 +23,49 @@ export class LibraryUI {
     window.toggleCluePanel = () => this.toggleCluePanel();
 
     this.initTheme();
+    this.renderLibrary();
+  }
+
+  // ─────────────────────────────
+  //  도서관 화면 렌더링
+  // ─────────────────────────────
+  renderLibrary() {
+    const categories = ['1980s', '1990s', '2000s'];
+    categories.forEach(cat => {
+      const el = document.getElementById(`shelf-${cat}`);
+      if (el) el.innerHTML = '';
+    });
+
+    let total = 0;
+    Object.entries(this.newspapers).forEach(([key, np]) => {
+      total++;
+      const cat = np.category || '2000s';
+      const shelf = document.getElementById(`shelf-${cat}`) || document.getElementById('shelf-2000s');
+      if (!shelf) return;
+
+      const solved = this.engine.state.solved[key];
+      const div = document.createElement('div');
+      div.className = `newspaper-item ${solved ? 'solved' : ''}`;
+      div.id = `np-item-${key}`;
+      div.onclick = () => window.openNewspaper(key);
+
+      // 날짜 포맷 (YYYY.MM.DD) 추출 시도
+      let displayDate = np.date || '';
+      const dateMatch = displayDate.match(/(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일/);
+      if (dateMatch) {
+         displayDate = `${dateMatch[1]}.${dateMatch[2].padStart(2,'0')}.${dateMatch[3].padStart(2,'0')}`;
+      }
+
+      div.innerHTML = `
+        <div class="np-date">${displayDate}</div>
+        <div class="np-headline">${np.headline.replace('...', '<br>')}</div>
+        <div class="np-status" id="np-status-${key}">${solved ? '✓ 해결됨' : '● 미해결'}</div>
+      `;
+      shelf.appendChild(div);
+    });
+
+    const footer = document.getElementById('library-footer');
+    if (footer) footer.textContent = `── 총 ${total}개의 신문 · 기록되지 않은 진실 ──`;
   }
 
   // ─────────────────────────────
