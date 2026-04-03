@@ -83,9 +83,11 @@ export class LibraryUI {
     // 클릭 가능한 단서 마커 치환
     (np.clues || []).forEach(c => {
       if (!c.marker) return;
-      const tag = `<span class="clue" data-clue="${c.id}" onclick="findClueInNp('${c.id}','${c.label}','${c.desc}')">${c.marker.replace(/\[|\]/g, '')}</span>`;
-      col1 = col1.replace(c.marker, tag);
-      col2 = col2.replace(c.marker, tag);
+      const tag  = `<span class="clue" data-clue="${c.id}" onclick="findClueInNp('${c.id}','${c.label}','${c.desc}')">${c.marker.replace(/\[|\]/g, '')}</span>`;
+      // 모든 발생 지점에 대해 전역 치환 (RegExp 활용)
+      const safeMarker = c.marker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
+      col1 = col1.replace(new RegExp(safeMarker, 'g'), tag);
+      col2 = col2.replace(new RegExp(safeMarker, 'g'), tag);
     });
 
     let html = `
@@ -334,8 +336,8 @@ export class LibraryUI {
 
     // 5. 시각적 보정 (신문 본문에서 이미 찾은 단서들 하이라이트)
     this.engine.state.cluesFound.forEach(id => {
-      const el = document.querySelector(`[data-clue="${id}"]`);
-      if (el) el.classList.add('found');
+      const elements = document.querySelectorAll(`[data-clue="${id}"]`);
+      elements.forEach(el => el.classList.add('found'));
     });
 
     console.log('🔄 Session restored for:', key);
