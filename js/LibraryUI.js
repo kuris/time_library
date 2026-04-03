@@ -72,10 +72,28 @@ export class LibraryUI {
     this.engine.state.currentKey = key;
     this._npCluesFound = [];
 
-    // UI 초기화 (수사 구역 숨김)
+    // UI 초기화 (수사 구역 숨김 및 헤더 설정)
     document.getElementById('field-notes-area').classList.remove('active');
     document.getElementById('game-stats').classList.remove('active');
-    document.querySelector('.clue-panel').classList.remove('active');
+    
+    const totalNeeded = (np.clues || []).length + (np.choices || []).filter(ch => ch.clue).length;
+    document.getElementById('game-era-badge').textContent = '──';
+    document.getElementById('game-location').textContent  = '도서관 내부 — 기록 보관소';
+    document.getElementById('game-clues').textContent     = `단서 ${this._npCluesFound.length}/${totalNeeded}`;
+
+    // 사이드바 활성화 및 미스터리 바 표시
+    document.querySelector('.clue-panel').classList.add('active');
+    document.getElementById('clue-list').innerHTML = '';
+    this.engine.resetMysteryBar(totalNeeded);
+    this.engine.renderStats();
+
+    // 복구 시 이미 찾은 신문 단서가 있다면 표시
+    this._npCluesFound.forEach(id => {
+      const c = (np.clues || []).find(x => x.id === id);
+      if (c) this.engine.addClueToPanel(c.label, c.desc, false);
+    });
+    
+    this.engine.updateMysteryProgress();
 
     let col1 = np.col1 || '';
     let col2 = np.col2 || '';
@@ -135,16 +153,27 @@ export class LibraryUI {
       this._npCluesFound.push(id);
     }
 
-    // 2. 수령 즉시 반영 (이미 수사 중인 경우)
-    // 수사 상태일 때 기사를 다시 클릭하면 즉시 패널에 추가됨
+    // 2. 수령 즉시 반영 (이미 수사 중이거나 신문 읽는 중)
     if (this.engine.state.currentKey) {
+      // 수사 중일 때
       const added = this.engine.addClue(id, label, desc);
-      if (added) {
+      if (added) this.audio.play('clue');
+    } else {
+      // 신문만 보던 중일 때도 패널에 이름과 설명 표시
+      const alreadyInList = Array.from(document.querySelectorAll('.clue-item-title'))
+                            .some(el => el.textContent === label);
+      if (!alreadyInList) {
+        this.engine.addClueToPanel(label, desc, true);
         this.audio.play('clue');
       }
-    } else {
-      // 신문만 보던 중이라면 소리만 재생
-      this.audio.play('clue');
+      // 상부 카운트 및 미스터리 바 업데이트
+      const np = this.newspapers[this._currentNewspaperKey];
+      const totalNeeded = (np.clues || []).length + (np.choices || []).filter(ch => ch.clue).length;
+      document.getElementById('game-clues').textContent = `단서 ${this._npCluesFound.length}/${totalNeeded}`;
+      
+      const pct = Math.round((this._npCluesFound.length / totalNeeded) * 100);
+      document.getElementById('mystery-fill').style.width = pct + '%';
+      document.getElementById('mystery-pct').textContent  = pct + '%';
     }
   }
 
@@ -341,5 +370,17 @@ export class LibraryUI {
     });
 
     console.log('🔄 Session restored for:', key);
+  }
+
+  // 해결 목록 UI 업데이트
+  updateSolvedUI() {
+    Object.keys(this.engine.state.solved || {}).forEach(key => {
+      if (this.engine.state.solved[key]) {
+        const item   = document.getElementById('np-item-' + key);
+        const status = document.getElementById('np-status-' + key);
+        if (item)   item.classList.add('solved');
+        if (status) status.textContent = '✓ 해결됨';
+      }
+    });
   }
 }
