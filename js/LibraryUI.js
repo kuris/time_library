@@ -41,10 +41,9 @@ export class LibraryUI {
       const directClues = (Array.isArray(np.clues) ? np.clues.length : 0);
       const choiceClues = (Array.isArray(np.choices) ? np.choices.filter(c => c && c.clue).length : 0);
       const clueCount = directClues + choiceClues;
-      const hasClueMeta = (directClues > 0 || choiceClues > 0);
 
-      // 클루 메타 정보가 있는 경우에만 5개 이하를 건너뜁니다.
-      if (hasClueMeta && clueCount <= 5) return;
+      // 단서 5개 이하(0포함)는 도서관에서 제외
+      if (clueCount <= 5) return;
 
       total++;
       const cat = np.category || '2000s';
