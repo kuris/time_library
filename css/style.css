@@ -317,3 +317,72 @@ body {
 .admin-btn.active { background: #3d2b1f; color: #fff; }
 .admin-code-wrap { background: #fffcf5; border-color: #d3c2a6; }
 #admin-code-output { color: #4d7a4d; }
+
+/* ════════════════════════════
+   전환 효과 & 착륙 애니메이션 (Restored)
+════════════════════════════ */
+.flash {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-body);
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+}
+.flash.go { animation: flashAnim 0.8s ease forwards; }
+
+@keyframes flashAnim {
+  0%   { opacity: 0; }
+  25%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* 착륙 오버레이 (시간 이동) */
+#landing-overlay {
+  position: fixed;
+  inset: 0;
+  background: #170e08; 
+  z-index: 8888;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+#landing-overlay.active { display: flex; }
+
+.landing-year {
+  font-size: 82px;
+  font-weight: 800;
+  color: var(--accent-gold);
+  letter-spacing: 12px;
+  opacity: 0;
+  animation: yearIn 0.8s 0.3s ease forwards;
+  text-shadow: 0 0 30px rgba(184,134,11,0.3);
+}
+
+.landing-date {
+  font-size: 16px;
+  color: #8b786a;
+  letter-spacing: 6px;
+  opacity: 0;
+  animation: fadeInUp 0.6s 0.9s ease forwards;
+}
+
+.landing-msg {
+  font-size: 13px;
+  color: #5d4a3b;
+  letter-spacing: 4px;
+  opacity: 0;
+  animation: fadeInUp 0.6s 1.3s ease forwards;
+}
+
+@keyframes yearIn {
+  from { opacity: 0; transform: scale(1.4); filter: blur(15px); }
+  to   { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
