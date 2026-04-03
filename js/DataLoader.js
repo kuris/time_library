@@ -112,15 +112,29 @@ export class DataLoader {
       // JSON 표준에 맞게 파싱 시도
       return JSON.parse(cleaned);
     } catch (e) {
-      // 2. 최후의 수단: 모든 연속된 따옴표를 하나로 강제 치환 (가장 강력한 보정)
+      // 2. 최후의 수단: 모든 연속된 따옴표 및 역슬래시 강제 치환 (가장 강력한 보정)
       try {
-        console.log('⚠️ JSON 보정 모드 진동 중...');
+        console.log('⚠️ JSON 심폐소생술 모드 가동 중...');
         let brute = cleaned;
-        // 문법 파괴를 최소화하며 따옴표 정리
+        
+        // 역슬래시(\) 제거 (Gemini가 잘못 넣은 이스케이프 제거)
+        brute = brute.replace(/\\"/g, '"');
+        brute = brute.replace(/\\/g, '');
+
+        // 앞뒤 따옴표 정리
         if (brute.startsWith('"') && brute.endsWith('"')) {
           brute = brute.substring(1, brute.length - 1);
         }
+        
+        // 연속된 따옴표 압축
         brute = brute.replace(/"+/g, '"');
+        
+        // 양 끝에 대괄호나 중괄호가 없다면 추가 시도 (파손 복구)
+        if (!brute.startsWith('[') && !brute.startsWith('{')) {
+           // 데이터 형태에 따라 유추 (Clues는 [], Choices는 [])
+           // 일단은 에러 로그만 찍고 반환
+        }
+
         return JSON.parse(brute);
       } catch (e2) {
         console.warn('❌ 완전 파손된 JSON 데이터:', cleaned);
