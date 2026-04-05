@@ -48,22 +48,63 @@
 
 <!-- 착륙 오버레이 (타임머신 연출) -->
 <div id="landing-overlay">
+<!-- 착륙 오버레이 (글로벌 레이더 다이브 연출) -->
+<div id="landing-overlay">
   <div id="landing-map-container" class="landing-map-container">
-    <svg viewBox="0 0 200 300" class="landing-map-svg">
-      <!-- 맵 배경 도트 그리드 (디지털 느낌) -->
-      <g id="map-dots" fill="rgba(200,169,110,0.2)"></g>
-      <!-- 대한민국 간략화 와이어프레임 -->
-      <path d="M75,30 L90,40 L105,60 L115,100 L120,150 L110,200 L90,240 L70,270 L50,285 L40,270 L45,240 L55,200 L60,150 L55,100 L65,60 L70,40 Z" fill="none" stroke="var(--accent)" stroke-width="0.5" stroke-dasharray="3 3" />
-      <!-- 타겟 핑 -->
+    <svg viewBox="0 0 800 600" class="landing-map-svg">
+      <!-- 1. 초광역 디지털 보관소 그리드 (화면 전체) -->
+      <g id="map-dots" fill="var(--accent)" opacity="0.15"></g>
+      <g stroke="var(--accent)" stroke-width="0.3" opacity="0.08">
+        <line x1="0" y1="0" x2="800" y2="0" />
+        <line x1="0" y1="100" x2="800" y2="100" />
+        <line x1="0" y1="200" x2="800" y2="200" />
+        <line x1="0" y1="300" x2="800" y2="300" />
+        <line x1="0" y1="400" x2="800" y2="400" />
+        <line x1="0" y1="500" x2="800" y2="500" />
+        <line x1="0" y1="600" x2="800" y2="600" />
+        <line x1="0" y1="0" x2="0" y2="600" />
+        <line x1="100" y1="0" x2="100" y2="600" />
+        <line x1="200" y1="0" x2="200" y2="600" />
+        <line x1="300" y1="0" x2="300" y2="600" />
+        <line x1="400" y1="0" x2="400" y2="600" />
+        <line x1="500" y1="0" x2="500" y2="600" />
+        <line x1="600" y1="0" x2="600" y2="600" />
+        <line x1="700" y1="0" x2="700" y2="600" />
+        <line x1="800" y1="0" x2="800" y2="600" />
+      </g>
+
+      <!-- 2. 주변 대륙 실루엣 (사이버네틱 도트) -->
+      <g fill="var(--accent)" opacity="0.1">
+        <!-- 중국 연안 -->
+        <circle cx="100" cy="100" r="1.5" /><circle cx="120" cy="150" r="1.5" /><circle cx="150" cy="300" r="1.5" />
+        <circle cx="180" cy="450" r="1.5" /><circle cx="200" cy="550" r="1.5" />
+        <!-- 일본 열도 -->
+        <circle cx="650" cy="200" r="1.5" /><circle cx="600" cy="300" r="1.5" />
+        <circle cx="550" cy="400" r="1.5" /><circle cx="500" cy="500" r="1.5" />
+      </g>
+
+      <!-- 3. 목표 지역: 대한민국 (상세 와이어프레임) -->
+      <g id="korea-land" transform="translate(370, 220)">
+        <path d="M30,10 L50,25 L75,55 L85,115 L95,190 L80,265 L50,325 L20,370 L5,350 L12,305 L27,245 L35,170 L27,95 L30,45 Z" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-dasharray="3 3">
+          <animate attributeName="stroke-dashoffset" from="20" to="0" dur="2s" repeatCount="indefinite" />
+        </path>
+      </g>
+
+      <!-- 4. 정밀 타겟 핑 -->
       <g id="map-target" class="map-target">
-        <circle id="map-ping-outer" cx="0" cy="0" r="10" fill="none" stroke="red" stroke-width="1">
-          <animate attributeName="r" from="2" to="20" dur="1.5s" repeatCount="indefinite" />
-          <animate attributeName="opacity" from="1" to="0" dur="1.5s" repeatCount="indefinite" />
+        <circle id="map-ping-outer" cx="0" cy="0" r="12" fill="none" stroke="red" stroke-width="2">
+          <animate attributeName="r" from="2" to="40" dur="1s" repeatCount="indefinite" />
+          <animate attributeName="opacity" from="1" to="0" dur="1s" repeatCount="indefinite" />
         </circle>
-        <circle id="map-ping-inner" cx="0" cy="0" r="3" fill="red" />
+        <circle id="map-ping-inner" cx="0" cy="0" r="5" fill="red" />
+        <!-- 타겟 브라켓 -->
+        <path d="M-15,-15 L-15,-5 M-15,-15 L-5,-15" stroke="red" stroke-width="1.5" fill="none" transform="translate(0,0)" />
+        <path d="M15,-15 L15,-5 M15,-15 L5,-15" stroke="red" stroke-width="1.5" fill="none" transform="translate(0,0)" />
+        <path d="M-15,15 L-15,5 M-15,15 L-5,15" stroke="red" stroke-width="1.5" fill="none" transform="translate(0,0)" />
+        <path d="M15,15 L15,5 M15,15 L5,15" stroke="red" stroke-width="1.5" fill="none" transform="translate(0,0)" />
       </g>
     </svg>
-    <div id="landing-location" class="landing-location">TARGET ACQUIRED</div>
+    <div id="landing-location" class="landing-location">INITIALIZING ARCHIVE SEARCH...</div>
   </div>
   <div class="landing-year" id="landing-year"></div>
   <div class="landing-date" id="landing-date"></div>

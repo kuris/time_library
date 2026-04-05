@@ -88,24 +88,24 @@ export class LibraryUI {
 
   _updateMapTarget(locationStr) {
     const coordsMap = {
-      '서울': { x: 75, y: 75 },
-      '서초': { x: 78, y: 78 },
-      '여의도': { x: 72, y: 77 },
-      '명동': { x: 76, y: 76 },
-      '강남': { x: 79, y: 79 },
-      '잠실': { x: 82, y: 80 },
-      '부천': { x: 65, y: 82 },
-      '김포': { x: 60, y: 70 },
-      '성동': { x: 80, y: 75 },
-      '대구': { x: 135, y: 175 },
-      '구미': { x: 120, y: 165 },
-      '부산': { x: 145, y: 225 },
-      '김해': { x: 135, y: 220 },
-      '진도': { x: 50, y: 260 },
-      '광주': { x: 70, y: 220 },
+      '서울': { x: 405, y: 265 },
+      '서초': { x: 408, y: 268 },
+      '여의도': { x: 402, y: 267 },
+      '명동': { x: 406, y: 266 },
+      '강남': { x: 409, y: 269 },
+      '잠실': { x: 412, y: 270 },
+      '부천': { x: 395, y: 272 },
+      '김포': { x: 390, y: 260 },
+      '성동': { x: 410, y: 265 },
+      '대구': { x: 435, y: 325 },
+      '구미': { x: 420, y: 315 },
+      '부산': { x: 455, y: 345 },
+      '김해': { x: 445, y: 340 },
+      '진도': { x: 380, y: 360 },
+      '광주': { x: 395, y: 340 },
     };
 
-    let targetCoords = { x: 100, y: 150 }; // 기본값 (중심)
+    let targetCoords = { x: 400, y: 300 }; // 기본값 (지도 중앙)
     let cityName = 'UNKNOWN';
 
     // 문자열에서 도시 키워드 추출
@@ -125,15 +125,24 @@ export class LibraryUI {
     if (outer) { outer.setAttribute('cx', targetCoords.x); outer.setAttribute('cy', targetCoords.y); }
     if (inner) { inner.setAttribute('cx', targetCoords.x); inner.setAttribute('cy', targetCoords.y); }
     
-    // 줌을 위한 transform-origin 설정 (SVG viewBox가 200x300이므로 백분율 계산)
+    // 줌을 위한 transform-origin 설정 (viewBox 800x600 기반)
     if (svgMap) {
-      const originX = (targetCoords.x / 200) * 100;
-      const originY = (targetCoords.y / 300) * 100;
+      const originX = (targetCoords.x / 800) * 100;
+      const originY = (targetCoords.y / 600) * 100;
       svgMap.style.transformOrigin = `${originX}% ${originY}%`;
     }
 
     if (locText) {
-      locText.textContent = `📍 [COORD_LOC] TARGET: ${cityName} ACQUIRED`;
+      // 위성 데이터 느낌의 좌표 텍스트 생성
+      const lat = (33 + Math.random() * 5).toFixed(4);
+      const lng = (124 + Math.random() * 7).toFixed(4);
+      locText.innerHTML = `
+        <div style="font-size:10px; opacity:0.6; margin-bottom:4px;">SCANNING ARCHIVE...</div>
+        <div>LAT: ${lat}N</div>
+        <div>LNG: ${lng}E</div>
+        <div style="color:var(--accent); margin-top:8px;">LOC: ${cityName}</div>
+        <div style="font-size:18px; margin-top:4px;">LOCK-ON [OK]</div>
+      `;
     }
   }
 

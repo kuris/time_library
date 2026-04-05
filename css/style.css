@@ -286,53 +286,68 @@ body {
   position: fixed; inset: 0; background: #000; z-index: 8888;
   display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
   overflow: hidden;
+  font-family: 'Courier New', Courier, monospace;
 }
 #landing-overlay.active { display: flex; }
+
+/* 위성 레이더 스캐닝 라인 */
+#landing-overlay::before {
+  content: ''; position: absolute; top: 50%; left: 50%;
+  width: 200vw; height: 1px; background: rgba(200,169,110,0.1);
+  transform: translate(-50%, -50%); z-index: 5;
+  animation: radarSweep 4s linear infinite;
+  pointer-events: none;
+}
+@keyframes radarSweep {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
 
 /* 지도 컨테이너 */
 .landing-map-container {
   width: 100%; height: 100%; position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
   flex-direction: column; opacity: 0; transition: opacity 0.3s;
-  background: radial-gradient(circle, rgba(200,169,110,0.05) 0%, transparent 80%);
+  background: radial-gradient(circle at center, rgba(166,139,103,0.1) 0%, transparent 70%);
 }
 #landing-overlay.active .landing-map-container { 
-  opacity: 1; animation: mapDive 3s cubic-bezier(0.6, 0, 0.4, 1) forwards; 
+  opacity: 1; animation: mapDive 3.2s cubic-bezier(0.7, 0, 0.3, 1) forwards; 
 }
 
 .landing-map-svg {
-  width: 120vw; height: 120vh; /* 화면을 가득 채우는 크기 */
-  filter: drop-shadow(0 0 15px var(--accent));
-  transition: transform 2.5s cubic-bezier(0.6, 0, 0.4, 1);
+  width: 180vw; height: 180vh; 
+  filter: drop-shadow(0 0 20px var(--accent));
+  transition: transform 2.8s cubic-bezier(0.7, 0, 0.3, 1);
   transform-origin: center;
 }
 
 .map-target { opacity: 0; }
-.map-target.active { opacity: 1; transition: opacity 0.2s 0.2s; }
+.map-target.active { opacity: 1; transition: opacity 0.2s 0.5s; }
 
+/* 정밀 타겟 UI */
 .landing-location {
-  position: absolute; bottom: 20%; left: 50%; transform: translateX(-50%);
-  color: #ff3333; font-family: 'Courier New', Courier, monospace;
-  font-size: 15px; font-weight: 800; letter-spacing: 3px;
-  text-shadow: 0 0 12px #ff3333; opacity: 0; z-index: 20;
+  position: absolute; bottom: 15%; right: 10%;
+  color: #ff3333; font-size: 15px; font-weight: 800; letter-spacing: 2px;
+  text-shadow: 0 0 15px #ff3333; opacity: 0; z-index: 20;
+  text-align: right; line-height: 1.5;
 }
 .landing-location.active { 
-  opacity: 1; animation: techBlink 0.15s infinite alternate; 
+  opacity: 1; animation: techBlink 0.1s 1.2s infinite alternate; 
 }
 
 @keyframes mapDive {
-  0% { transform: scale(1); filter: blur(0); opacity: 0; }
+  0% { transform: scale(0.4); filter: blur(1px); opacity: 0; }
   10% { opacity: 1; }
-  45% { transform: scale(1.1); filter: blur(0); }
-  75% { transform: scale(8); filter: blur(10px); opacity: 1; }
-  90% { opacity: 0; }
-  100% { transform: scale(12); opacity: 0; }
+  40% { transform: scale(0.45); filter: blur(0); }
+  70% { transform: scale(40); filter: blur(15px); opacity: 1; }
+  85% { opacity: 0.8; filter: blur(30px); }
+  100% { transform: scale(60); opacity: 0; }
 }
 
 @keyframes techBlink {
-  0% { opacity: 1; transform: translateX(-50%) skewX(0deg); }
-  50% { opacity: 0.7; transform: translateX(-50%) skewX(10deg); }
-  100% { opacity: 1; transform: translateX(-50%) skewX(-10deg); }
+  0% { opacity: 1; transform: skewX(0deg) scale(1); }
+  50% { opacity: 0.6; transform: skewX(5deg) scale(1.02); }
+  100% { opacity: 0.9; transform: skewX(-5deg) scale(0.98); }
 }
 
 @keyframes whiteout {
