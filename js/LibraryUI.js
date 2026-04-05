@@ -108,6 +108,15 @@ export class LibraryUI {
     document.getElementById('map-target').classList.add('active');
     document.getElementById('landing-location').classList.add('active');
 
+    // ────────────────────────────
+    // 💡 중요: 오버레이가 활성화된(display: flex) 직후 지도의 크기를 재계산해야 합니다.
+    // ────────────────────────────
+    if (this.map) {
+      setTimeout(() => {
+        this.map.invalidateSize();
+      }, 50);
+    }
+
     this.audio.play('siren'); // 착륙 순간 빈티지 경보음
     // 애니메이션 시퀀스 완료 후 종료 (약 5.2초로 연장)
     setTimeout(() => { ov.classList.remove('active'); if (cb) cb(); }, 5500);
