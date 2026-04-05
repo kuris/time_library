@@ -99,7 +99,18 @@ body {
   box-shadow: 0 16px 40px rgba(0,0,0,0.9);
   filter: grayscale(60%) brightness(0.85);
 }
-.newspaper-item.solved { filter: grayscale(0%) brightness(1); border-color: var(--accent); box-shadow: 0 0 24px rgba(200,169,110,0.35); }
+.newspaper-item.solved { 
+  filter: grayscale(0%) brightness(1); 
+  border-color: var(--accent); 
+  box-shadow: 0 0 30px rgba(166,139,103,0.3);
+}
+.newspaper-item.solved::after {
+  content: 'SOLVED'; position: absolute; top: 15px; left: 10px;
+  border: 2px solid #8b1a1a; color: #8b1a1a; font-size: 10px; font-weight: 900;
+  padding: 2px 6px; transform: rotate(-15deg); letter-spacing: 1px;
+  background: rgba(255,255,255,0.1); backdrop-filter: blur(1px);
+  z-index: 5; pointer-events: none;
+}
 .newspaper-item.locked { opacity: 0.25; cursor: not-allowed; }
 
 .np-date      { font-size: 7px; color: var(--text-dim); letter-spacing: 1px; border-bottom: 1px solid var(--border-item); padding-bottom: 4px; margin-bottom: 5px; }
@@ -256,7 +267,18 @@ body {
   100% { opacity: 1; transform: scale(1) rotate(0deg); filter: sepia(15%); }
 }
 .solved-headline { font-size: 22px; font-weight: 800; text-align: center; line-height: 1.4; margin: 14px 0; color: #8b1a1a; }
-.solved-stamp    { display: inline-block; border: 3px solid #8b1a1a; color: #8b1a1a; font-size: 16px; font-weight: 800; padding: 4px 18px; letter-spacing: 6px; transform: rotate(-8deg); }
+.solved-stamp-wrap { margin: 20px 0; text-align: center; perspective: 1000px; }
+.solved-stamp { 
+  display: inline-block; border: 4px double #8b1a1a; color: #8b1a1a; 
+  font-size: 20px; font-weight: 900; padding: 6px 24px; 
+  letter-spacing: 10px; transform: rotate(-12deg); 
+  animation: stampImpact 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  opacity: 0; box-shadow: 0 0 10px rgba(139, 26, 26, 0.2);
+}
+@keyframes stampImpact {
+  0% { transform: scale(5) rotate(20deg); opacity: 0; filter: blur(10px); }
+  100% { transform: scale(1) rotate(-12deg); opacity: 1; filter: blur(0); }
+}
 .solved-clue-item { font-size: 12px; line-height: 2; color: #444; padding-left: 12px; border-left: 2px solid #c8a96e; margin-bottom: 6px; }
 .shelf-back-btn  { margin-top: 32px; background: transparent; color: var(--accent); border: 1px solid rgba(200,169,110,0.2); padding: 13px 36px; font-size: 12px; letter-spacing: 4px; cursor: pointer; }
 
