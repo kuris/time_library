@@ -82,8 +82,8 @@ export class LibraryUI {
     document.getElementById('landing-location').classList.add('active');
 
     this.audio.play('siren'); // 착륙 순간 빈티지 경보음
-    // 애니메이션 시퀀스 완료 후 종료 (약 4.5초로 연장)
-    setTimeout(() => { ov.classList.remove('active'); if (cb) cb(); }, 4800);
+    // 애니메이션 시퀀스 완료 후 종료 (약 5.2초로 연장)
+    setTimeout(() => { ov.classList.remove('active'); if (cb) cb(); }, 5500);
   }
 
   _updateMapTarget(locationStr) {
@@ -120,13 +120,20 @@ export class LibraryUI {
     const outer = document.getElementById('map-ping-outer');
     const inner = document.getElementById('map-ping-inner');
     const locText = document.getElementById('landing-location');
+    const svgMap = document.querySelector('.landing-map-svg');
 
     if (outer) { outer.setAttribute('cx', targetCoords.x); outer.setAttribute('cy', targetCoords.y); }
     if (inner) { inner.setAttribute('cx', targetCoords.x); inner.setAttribute('cy', targetCoords.y); }
     
+    // 줌을 위한 transform-origin 설정 (SVG viewBox가 200x300이므로 백분율 계산)
+    if (svgMap) {
+      const originX = (targetCoords.x / 200) * 100;
+      const originY = (targetCoords.y / 300) * 100;
+      svgMap.style.transformOrigin = `${originX}% ${originY}%`;
+    }
+
     if (locText) {
-      locText.textContent = `📍 TARGET: ${cityName} ACQUIRED`;
-      // 핑 좌측 하단에 텍스트 배치 (SVG 좌표가 아닌 화면 중앙 기준이라 절대 좌표 필요 시 보정 필요하지만 일단 맵 중앙 고정)
+      locText.textContent = `📍 [COORD_LOC] TARGET: ${cityName} ACQUIRED`;
     }
   }
 

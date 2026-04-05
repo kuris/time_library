@@ -293,51 +293,66 @@ body {
 .landing-map-container {
   width: 100%; height: 100%; position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
-  flex-direction: column; opacity: 0; transition: opacity 0.5s;
+  flex-direction: column; opacity: 0; transition: opacity 0.3s;
+  background: radial-gradient(circle, rgba(200,169,110,0.05) 0%, transparent 80%);
 }
 #landing-overlay.active .landing-map-container { 
-  opacity: 1; animation: mapFadeOut 0.5s 1.8s forwards; 
+  opacity: 1; animation: mapDive 3s cubic-bezier(0.6, 0, 0.4, 1) forwards; 
 }
 
 .landing-map-svg {
-  width: 300px; height: 450px; filter: drop-shadow(0 0 10px var(--accent));
-  animation: mapScan 2s ease-in-out;
+  width: 120vw; height: 120vh; /* 화면을 가득 채우는 크기 */
+  filter: drop-shadow(0 0 15px var(--accent));
+  transition: transform 2.5s cubic-bezier(0.6, 0, 0.4, 1);
+  transform-origin: center;
 }
 
 .map-target { opacity: 0; }
-.map-target.active { opacity: 1; transition: opacity 0.3s 0.5s; }
+.map-target.active { opacity: 1; transition: opacity 0.2s 0.2s; }
 
 .landing-location {
-  position: absolute; color: #ff0000; font-family: 'Courier New', Courier, monospace;
-  font-size: 14px; font-weight: 800; letter-spacing: 2px;
-  text-shadow: 0 0 8px #ff0000; opacity: 0;
-  pointer-events: none;
+  position: absolute; bottom: 20%; left: 50%; transform: translateX(-50%);
+  color: #ff3333; font-family: 'Courier New', Courier, monospace;
+  font-size: 15px; font-weight: 800; letter-spacing: 3px;
+  text-shadow: 0 0 12px #ff3333; opacity: 0; z-index: 20;
 }
 .landing-location.active { 
-  opacity: 1; animation: blink 0.2s 0.8s infinite alternate; 
+  opacity: 1; animation: techBlink 0.15s infinite alternate; 
 }
 
-@keyframes mapScan {
-  0% { transform: scale(1.1) translateY(20px); opacity: 0; }
-  20% { opacity: 0.8; }
-  100% { transform: scale(1) translateY(0); opacity: 1; }
+@keyframes mapDive {
+  0% { transform: scale(1); filter: blur(0); opacity: 0; }
+  10% { opacity: 1; }
+  45% { transform: scale(1.1); filter: blur(0); }
+  75% { transform: scale(8); filter: blur(10px); opacity: 1; }
+  90% { opacity: 0; }
+  100% { transform: scale(12); opacity: 0; }
 }
 
-@keyframes mapFadeOut {
-  to { opacity: 0; transform: scale(0.9); }
+@keyframes techBlink {
+  0% { opacity: 1; transform: translateX(-50%) skewX(0deg); }
+  50% { opacity: 0.7; transform: translateX(-50%) skewX(10deg); }
+  100% { opacity: 1; transform: translateX(-50%) skewX(-10deg); }
 }
 
-@keyframes blink {
-  from { opacity: 1; } to { opacity: 0.4; }
+@keyframes whiteout {
+  0% { background: transparent; }
+  80% { background: #fff; }
+  100% { background: var(--bg-app); }
+}
+#landing-overlay.active::after {
+  content: ''; position: fixed; inset: 0; pointer-events: none;
+  z-index: 9999; animation: whiteout 0.5s 2.2s forwards;
 }
 
 .landing-year { 
-  font-size: 72px; font-weight: 800; color: var(--accent); 
-  letter-spacing: 8px; opacity: 0; z-index: 10;
-  text-shadow: 0 0 20px rgba(200,169,110,0.5);
+  font-size: 84px; font-weight: 900; color: var(--accent); 
+  letter-spacing: 12px; opacity: 0; z-index: 100;
+  text-shadow: 0 0 30px rgba(200,169,110,0.6);
+  font-family: 'Nanum Myeongjo', serif;
 }
 #landing-overlay.active .landing-year { 
-  animation: yearIn 0.8s 2s ease forwards; 
+  animation: yearIn 0.7s 2.6s cubic-bezier(0.2, 0, 0.2, 1) forwards; 
 }
 
 @keyframes yearIn { 
