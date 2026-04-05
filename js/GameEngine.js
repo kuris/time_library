@@ -18,6 +18,7 @@ export class GameEngine {
       stats: { money: 100, stamina: 100, mental: 100, stress: 0 },
       clueContexts: {},  // { clueId: { text: [], scene: string, choiceIdx: number } }
       logHistory: [],    // 최근 로그 기록 (대화 맥락 파악용)
+      currentScene: null, // 현재 머물고 있는 씬 이름 (재개용)
     };
 
     // ── 타이핑 큐 ──
@@ -34,6 +35,7 @@ export class GameEngine {
   // ─────────────────────────────
   registerScene(name, fn) {
     this._sceneRegistry[name] = fn;
+    this.state.currentScene = name;
   }
 
   getScene(name) {
@@ -52,6 +54,7 @@ export class GameEngine {
     this.state.cluesFound  = [];
     this.state.usedChoices = [];
     this.state.totalClues  = 5;
+    this.state.currentScene = null;
     this.state.stats       = { money: 100, stamina: 100, mental: 100, stress: 0 };
     this._queue = [];
     this._busy  = false;
@@ -301,6 +304,7 @@ export class GameEngine {
       totalClues:  this.state.totalClues,
       stats:       { ...this.state.stats },
       clueContexts: { ...this.state.clueContexts },
+      currentScene: this.state.currentScene,
       logHTML:     document.getElementById('game-log') ? document.getElementById('game-log').innerHTML : '',
     };
     localStorage.setItem('time_library_save', JSON.stringify(data));
@@ -322,6 +326,7 @@ export class GameEngine {
         this.state.usedChoices = data.usedChoices || [];
         this.state.totalClues  = data.totalClues  || 0;
         if (data.clueContexts) this.state.clueContexts = data.clueContexts;
+        if (data.currentScene) this.state.currentScene = data.currentScene;
         if (data.stats)   this.state.stats   = { ...data.stats };
         if (data.logHTML) this.state._tempLogHTML = data.logHTML; // UI에서 처리하도록 임시 저장
       }

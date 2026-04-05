@@ -333,15 +333,32 @@ export class LibraryUI {
     const np = this.newspapers[key];
     if (!np) return;
 
-    // 신문에서 찾은 단서를 초기 목록으로 설정
-    this.engine.resetForCase(key);
+    const isSameCase = (this.engine.state.currentKey === key);
+    const isSolved   = this.engine.state.solved[key];
+    let isResuming   = false;
+
+    if (isSameCase && !isSolved) {
+      // 1. 동일 사건 재진입 (미해결 시): 기존 세션 유지
+      isResuming = true;
+      // 신문에서 새로 클릭해서 찾은 단서들을 병합
+      this._npCluesFound.forEach(id => {
+        if (!this.engine.state.cluesFound.includes(id)) {
+          const c = (np.clues || []).find(x => x.id === id);
+          if (c) this.engine.addClue(c.id, c.label, c.desc);
+        }
+      });
+    } else {
+      // 2. 새 사건 진입 또는 해결된 건 재수사: 초기화
+      this.engine.resetForCase(key);
+      this.engine.state.cluesFound = [...this._npCluesFound];
+    }
+
     // 단서 합산 (신문 단서 + 조사/스토리 단서)
     const npClueCount    = (np.clues || []).length;
     const choiceClueCount = (np.choices || []).filter(ch => ch.clue).length;
     const storyClueCount  = np.storyClueCount || (np.isGeneric === false ? 6 : 0);
 
     this.engine.state.totalClues = npClueCount + choiceClueCount + storyClueCount;
-    this.engine.state.cluesFound = [...this._npCluesFound];
     this._npCluesFound = [];
 
     // 자동저장 시점 (수사 개시)
@@ -356,26 +373,56 @@ export class LibraryUI {
         document.querySelector('.clue-panel').classList.add('active');
       }
 
-      this.engine.clearEl('game-log');
+      if (isResuming) {
+        this.engine.log('system', '⏳ 이전에 중단된 지점에서 수사를 재개합니다...');
+      } else {
+        this.engine.clearEl('game-log');
+        this.engine.clearEl('clue-list');
+        this.engine.resetMysteryBar();
+      }
+      
       this.engine.clearEl('game-choices');
-      this.engine.clearEl('clue-list');
-      this.engine.resetMysteryBar();
       this.engine.renderStats();
 
-      (np.clues || []).forEach(c => {
-        if (this.engine.state.cluesFound.includes(c.id)) {
-          this.engine.addClueToPanel(c.label, c.desc, false);
-        }
-      });
+      // 세션 유지 시에도 단서 패널에 표시되지 않은 단서들(병합된 것 등)을 다시 그려줌
+      if (isResuming) {
+        this.engine.clearEl('clue-list');
+        (np.clues || []).forEach(c => {
+          if (this.engine.state.cluesFound.includes(c.id)) {
+            this.engine.addClueToPanel(c.label, c.desc, false);
+          }
+        });
+        // 스토리/선택지 단서들도 포함
+        this.engine.state.cluesFound.forEach(id => {
+          const skip = (np.clues || []).some(cc => cc.id === id);
+          if (!skip) {
+             const from2 = (np.choices || []).find(ch => ch.clue && ch.clue.id === id)?.clue;
+             if (from2) this.engine.addClueToPanel(from2.label, from2.desc, false);
+          }
+        });
+        this.engine.updateMysteryProgress();
+      }
 
       this.engine.clearScenes(); // 새 시작 시 씬 레지스트리 초기화
 
       if (np.isGeneric === false && this.stories[key]) {
+        // 하드코딩 스토리
         this.stories[key](this.engine, (k, headline, labels, ending) =>
           this.solveCase(k, headline, labels, ending)
         );
+
+        // 만약 중단된 씬이 있다면 해당 지점으로 점프
+        if (isResuming && this.engine.state.currentScene) {
+          const sceneFn = this.engine.getScene(this.engine.state.currentScene);
+          if (sceneFn) {
+            this.engine.clearQueue(); // story function이 내부적으로 호출한 start() 로그 등 삭제
+            this.engine.log('system', '⏳ 시간의 파편을 연결하여 이전 지점으로 도약합니다...');
+            sceneFn();
+          }
+        }
       } else {
-        this._startGenericCase(key);
+        // 범용 케이스 (isResuming 전달)
+        this._startGenericCase(key, isResuming);
       }
     });
   }
@@ -383,16 +430,18 @@ export class LibraryUI {
   // ─────────────────────────────
   //  범용 조사 엔진
   // ─────────────────────────────
-  _startGenericCase(key) {
+  _startGenericCase(key, isResuming = false) {
     const np = this.newspapers[key];
     this.engine.setEraBadge(np.landing.date);
     this.engine.setLocation('📍 ' + (np.location || '서울'));
 
-    this.engine.log('time', `[ ${np.landing.date} ${np.time || '오전'} ]`);
-    this.engine.log('story', np.eventStory);
-    if (np.mysteryInsight) this.engine.log('mystery', np.mysteryInsight);
-    this.engine.log('system', 'TIP: 신문 기사 본문의 강조된 키워드들도 수집해야 하는 단서입니다.');
-    this.engine.logD();
+    if (!isResuming) {
+      this.engine.log('time', `[ ${np.landing.date} ${np.time || '오전'} ]`);
+      this.engine.log('story', np.eventStory);
+      if (np.mysteryInsight) this.engine.log('mystery', np.mysteryInsight);
+      this.engine.log('system', 'TIP: 신문 기사 본문의 강조된 키워드들도 수집해야 하는 단서입니다.');
+      this.engine.logD();
+    }
 
     this._showInvestigationChoices(key);
   }
